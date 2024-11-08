@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chat</title>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    #messageInput {
+      width: calc(100% - 80px);
+      padding: 0.5rem;
+    }
+    button {
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Real-Time Chat</h1>
+  <div id="userDetails">
+    <label for="senderId">Sender ID: </label>
+    <input id="senderId" type="number" placeholder="Enter your ID" required>
+    <label for="receiverId">Receiver ID: </label>
+    <input id="receiverId" type="number" placeholder="Enter receiver's ID" required>
+  </div>
+  <div id="messages"></div>
+  <input id="messageInput" type="text" placeholder="Type a message" onkeypress="handleKeyPress(event)">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const socket = io('http://localhost:3000');
+
+    socket.on('message', (data) => {
+      const messageContainer = document.getElementById('messages');
+      const newMessage = document.createElement('p');
+      newMessage.textContent = `[${new Date(data.createdAt).toLocaleTimeString()}] Sender ${data.senderId}: ${data.content}`;
+      messageContainer.appendChild(newMessage);
+      messageContainer.scrollTop = messageContainer.scrollHeight; // Auto-scroll to the bottom
+    });
+
+    function sendMessage() {
+      const senderId = document.getElementById('senderId').value;
+      const receiverId = document.getElementById('receiverId').value;
+      const messageInput = document.getElementById('messageInput');
+
+      if (senderId && receiverId && messageInput.value.trim() !== '') {
+        const message = {
+          content: messageInput.value,
+          senderId: parseInt(senderId),
+          receiverId: parseInt(receiverId),
+          createdAt: new Date().toISOString() // Include timestamp
+        };
+        socket.emit('message', message);
+        messageInput.value = '';
+      } else {
+        alert('Please fill in all fields and enter a valid message.');
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+  </script>
+</body>
+</html>
