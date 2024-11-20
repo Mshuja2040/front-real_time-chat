@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real-Time Chat</title>
-  <script src="https://chat-api-red.vercel.app/socket.io/socket.io.js"></script>
+  <script src="https://realtime-chat-app-fc52641bfaf8.herokuapp.com/socket.io/socket.io.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -39,7 +39,7 @@
   <button onclick="sendMessage()">Send</button>
 
   <script>
-    let baseurl = "https://chat-api-red.vercel.app"
+    let baseurl = "https://realtime-chat-app-fc52641bfaf8.herokuapp.com"
     const socket = io(baseurl);
 
     socket.on('message', (data) => {
